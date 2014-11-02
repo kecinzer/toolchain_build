@@ -165,7 +165,7 @@ export	CC_FOR_TARGET="$(TARGET_GCC_BUILDDIR)/gcc/xgcc \
 #export CXXFLAGS_FOR_TARGET= -frtti
 #
 
-CFLAGS_FOR_TARGET += -O2 -Os -g
+CFLAGS_FOR_TARGET += -O3 -O2 -Os -gdwarf-2 -g -fstrict-aliasing -Wstrict-aliasing=3 -Werror=strict-aliasing
 CXXFLAGS_FOR_TARGET += $(CFLAGS_FOR_TARGET)
 LDFLAGS_FOR_TARGET =
 
@@ -409,10 +409,12 @@ CFLAGS_FOR_TARGET += -fno-short-enums -DTARGET_POSIX_IO
 # Android and ARM
 ifeq (arm,$(target_cpu))
 ifneq ($(target_os),linux-androideabi)
-GCC_CONFIG_ARGS += --with-abi=aapcs
+GCC_CONFIG_ARGS += --with-abi=aapcs --with-float=hard
+else
+GCC_CONFIG_ARGS += --with-float=soft
 endif
 
-GCC_CONFIG_ARGS += --with-float=soft --with-fpu=neon
+GCC_CONFIG_ARGS += --with-tune=cortex-a15 --with-fpu=neon-vfpv4 --with-arch=armv7-a
 endif
 
 ifeq ($(BUILD_ANDROID_GCC),yes)
